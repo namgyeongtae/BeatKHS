@@ -23,7 +23,7 @@ public class ResourceManager
         return Resources.Load<T>(path);
     }
 
-    public GameObject Instantiate(string path, int poolCount = 5, Transform parent = null)
+    public GameObject Instantiate(string path, Transform parent = null, int poolCount = 5)
     {
         GameObject original = Load<GameObject>($"Prefabs/{path}");
         if (original == null)

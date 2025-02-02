@@ -9,9 +9,13 @@ public class LongNote : Note
     [SerializeField] private GameObject _bodyNote;
     [SerializeField] private GameObject _endNote;
 
+    private int _targetCombo;
+
     public GameObject StartNote => _startNote;
     public GameObject BodyNote => _bodyNote;
     public GameObject EndNote => _endNote;
+
+    public int TargetCombo => _targetCombo;
     
     public override void Initialize(NoteData noteData, float speed, float targetTimeInSeconds, float distance, float judgementLineY)
     {
@@ -72,12 +76,20 @@ public class LongNote : Note
 
         var endPosY = noteRect.anchoredPosition.y + noteRect.sizeDelta.y;
         _endNote.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, endPosY);
+
+        // targetCombo 계산
+        // 예: 매 0.1초마다 1콤보씩 증가
+        float comboInterval = 0.1f; // 0.1초마다 1콤보
+        _targetCombo = Mathf.CeilToInt(durationInSeconds / comboInterval);
+        
+        // 최소 콤보 보장
+        _targetCombo = Mathf.Max(_targetCombo, 1);
     }
 
     public void SetNoteMiss()
     {
-        _startNote.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
-        _bodyNote.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
-        _endNote.GetComponent<Image>().color = new Color(0, 0, 0, 0.5f);
+        _startNote.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+        _bodyNote.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
+        _endNote.GetComponent<Image>().color = new Color(1, 1, 1, 0.5f);
     }
 }

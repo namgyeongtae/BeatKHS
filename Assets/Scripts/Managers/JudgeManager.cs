@@ -8,12 +8,14 @@ public class JudgeManager : MonoBehaviour
 {
     public static JudgeManager Instance { get; private set; }
 
-    [SerializeField] RectTransform _center = null;
-    [SerializeField] RectTransform[] _timingRect = null;
+    [SerializeField] private RectTransform _center = null;
+    [SerializeField] private RectTransform[] _timingRect = null;
 
-    JudgeType[] _judgeTypeList = { JudgeType.Bad, JudgeType.Good, JudgeType.Perfect };
+    private JudgeType[] _judgeTypeList = { JudgeType.Bad, JudgeType.Good, JudgeType.Perfect };
 
-    Vector2[] _timingBoxs = null;
+    private Vector2[] _timingBoxs = null;
+
+    // private int _currentCombo = 0;
 
     void Awake()
     {
@@ -54,7 +56,8 @@ public class JudgeManager : MonoBehaviour
         _center.GetWorldCorners(judgementCorners);
         float judgementWorldY = judgementCorners[0].y;
 
-        float maxJudgeDistance = 200f; // 적절한 값으로 조정하세요
+        float maxJudgeDistance = 400f; // 적절한 값으로 조정하세요
+        Debug.Log($"NoteWorldY : {noteWorldY}, JudgementWorldY : {judgementWorldY}");
         if (Mathf.Abs(noteWorldY - judgementWorldY) <= maxJudgeDistance)
         {
             if (targetNote.NoteData.type == "ShortNote")
@@ -85,14 +88,19 @@ public class JudgeManager : MonoBehaviour
             {
                 Debug.Log("Hit " + _judgeTypeList[y].ToString());
                 result = _judgeTypeList[y];
-
-                if (result != JudgeType.Miss && result != JudgeType.Bad)
-                {
-                    Managers.UI.ShowHitEffect(targetNote.transform);
-                }
-
                 break;
             }
+        }
+
+        // 콤보 이펙트
+        if (result != JudgeType.Miss && result != JudgeType.Bad)
+        {
+            Managers.UI.ShowHitEffect(targetNote.transform);
+            Managers.UI.GetUI<ComboUI>("ComboUI").ComboEffect();
+        }
+        else
+        {
+            Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
         }
 
         // Notes 리스트에서 제거
@@ -112,8 +120,6 @@ public class JudgeManager : MonoBehaviour
 
     public IEnumerator JudgeLongNote(LongNote targetNote, int lane)
     {
-        float duration = targetNote.NoteData.duration;
-        // JudgeType initialJudge = JudgeShortNote(targetNote, lane);
         JudgeType result = JudgeType.Miss;
         
         // 노트의 위치를 스크린 좌표계로 변환
@@ -135,27 +141,50 @@ public class JudgeManager : MonoBehaviour
         {
             Debug.Log("Miss or Bad Long Note");
             targetNote.SetNoteMiss();
+            Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
             yield break;
         }
 
         var hitEffect = Managers.UI.ShowLongHitEffect(targetNote.transform);
 
         Vector3[] endNoteCorners = new Vector3[4];
-        targetNote.GetComponent<LongNote>().EndNote.GetComponent<RectTransform>().GetWorldCorners(endNoteCorners);
+        targetNote.EndNote.GetComponent<RectTransform>().GetWorldCorners(endNoteCorners);
         float endNotePosY = endNoteCorners[0].y;
+        float startNotePosY = t_notePosY;
+        float totalDistance = endNotePosY - startNotePosY;
+
+        int comboGained = 0;
 
         // 레인에 해당하는 키를 누르는 동안안
         while (KeyInputManager.Instance.IsKeyInputDown[lane])
         {
-            // 매 프레임마다 엔드 노트의 현재 스크린 좌표 업데이트
-            targetNote.GetComponent<LongNote>().EndNote.GetComponent<RectTransform>().GetWorldCorners(endNoteCorners);
+            // 매 프레임마다 엔드 노트의 현재 스크린 좌표 업데이트ㅋ`
+            targetNote.EndNote.GetComponent<RectTransform>().GetWorldCorners(endNoteCorners);
             endNotePosY = endNoteCorners[0].y;
 
             Debug.Log($"EndNotePos : {endNotePosY}, T_NotePosY : {t_notePosY}");
-            if (targetNote == null || !targetNote.gameObject.activeInHierarchy || endNotePosY < t_notePosY)
+            if (targetNote == null || !targetNote.gameObject.activeInHierarchy)
+            {
+                Debug.Log("End Note is out of range");
+                yield break;
+            }
+
+            if (endNotePosY < t_notePosY)
             {
                 Debug.Log("End Note is out of range");
                 break;
+            }
+
+            float currentProgress = 1f - ((endNotePosY - t_notePosY) / totalDistance);
+        
+            // 목표 콤보 수에 따른 다음 콤보 획득 시점 계산
+            float nextComboThreshold = (comboGained + 1f) / targetNote.TargetCombo;
+            
+            // 진행도가 다음 콤보 획득 시점을 넘었다면 콤보 증가
+            if (currentProgress >= nextComboThreshold && comboGained < targetNote.TargetCombo)
+            {
+                Managers.UI.GetUI<ComboUI>("ComboUI").ComboEffect();
+                comboGained++;
             }
 
             yield return null;
@@ -165,7 +194,13 @@ public class JudgeManager : MonoBehaviour
         // TODO : 키를 놓았을 때 EndNote의 위치를 확인하여 또 판정을 내려야 한다.
         // 적절한 위치에서 롱노트를 떼지 못하면 miss 혹은 bad 판정을 내려서 노트에 투명도를 부여하고 
         // 콤보 카운트를 초기화 해야한다.
-
+        if (endNotePosY > _timingBoxs[0].y)
+        {
+            Debug.Log("Miss Long Note");
+            targetNote.SetNoteMiss();
+            // TODO : 콤보 카운트 초기화
+            Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
+        }
         
         if (hitEffect != null)
         {
@@ -175,9 +210,12 @@ public class JudgeManager : MonoBehaviour
 
         // TODO
         // 현재 키 입력을 떼기만 해도 제거하고 있는 상황 
-        // 롱노트는 endNote가 판정선 아래로 내려가야지만 제거 되야 한다.
-        // 키를 놓았을 때의 처리  
-        targetNote.RemoveNote();
+        // 롱노트는 endNote가 판정선 아래로 내려가야지만 파괴 되야 한다.
+        // 키를 놓았을 때의 처리
+        if (MusicManager.Instance.Notes[lane].Count > 0)
+        {
+            MusicManager.Instance.Notes[lane].RemoveAt(0);
+        }
     }
 }
 
