@@ -95,6 +95,8 @@ public class AudioManager : MonoBehaviour
         int bgmIndex = (int)bgm;
         FMOD.Sound sound = _bgms[bgmIndex];
         
+        sound.setMode(FMOD.MODE.DEFAULT);
+
         // 곡 길이 가져오기
         sound.getLength(out _songLengthInMs, FMOD.TIMEUNIT.MS);
         _songLength = _songLengthInMs / 1000f;
@@ -108,7 +110,7 @@ public class AudioManager : MonoBehaviour
     public void PlaySong(float startTime = 0f)
     {
         if (!_bgmChannel.hasHandle()) return;
-
+        
         _bgmChannel.setPosition((uint)(startTime * 1000), FMOD.TIMEUNIT.MS);
         _bgmChannel.setPaused(false);
         _isPlaying = true;
