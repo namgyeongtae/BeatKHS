@@ -25,6 +25,11 @@ public class InputKeys : MonoBehaviour
         KeyInputManager.Instance.OnKeyInputDown[1] += () => _keys[1].GetComponent<Image>().sprite = _keyInputs;
         KeyInputManager.Instance.OnKeyInputDown[2] += () => _keys[2].GetComponent<Image>().sprite = _keyInputs;
         KeyInputManager.Instance.OnKeyInputDown[3] += () => _keys[3].GetComponent<Image>().sprite = _keyInputs;
+        
+        KeyInputManager.Instance.OnKeyInputDown[0] += () => _keys[0].transform.GetChild(0).gameObject.SetActive(true);
+        KeyInputManager.Instance.OnKeyInputDown[1] += () => _keys[1].transform.GetChild(0).gameObject.SetActive(true);
+        KeyInputManager.Instance.OnKeyInputDown[2] += () => _keys[2].transform.GetChild(0).gameObject.SetActive(true);
+        KeyInputManager.Instance.OnKeyInputDown[3] += () => _keys[3].transform.GetChild(0).gameObject.SetActive(true);
 
         KeyInputManager.Instance.OnKeyInputDown[0] += () => JudgeManager.Instance.Judge(0);
         KeyInputManager.Instance.OnKeyInputDown[1] += () => JudgeManager.Instance.Judge(1);
@@ -34,6 +39,11 @@ public class InputKeys : MonoBehaviour
 
     void BindKeyInputUp()
     {
+        KeyInputManager.Instance.OnKeyInputUp[0] += () => _keys[0].transform.GetChild(0).gameObject.SetActive(false);
+        KeyInputManager.Instance.OnKeyInputUp[1] += () => _keys[1].transform.GetChild(0).gameObject.SetActive(false);
+        KeyInputManager.Instance.OnKeyInputUp[2] += () => _keys[2].transform.GetChild(0).gameObject.SetActive(false);
+        KeyInputManager.Instance.OnKeyInputUp[3] += () => _keys[3].transform.GetChild(0).gameObject.SetActive(false);
+
         KeyInputManager.Instance.OnKeyInputUp[0] += () => _keys[0].GetComponent<Image>().sprite = _keyInputsUp;
         KeyInputManager.Instance.OnKeyInputUp[1] += () => _keys[1].GetComponent<Image>().sprite = _keyInputsUp;
         KeyInputManager.Instance.OnKeyInputUp[2] += () => _keys[2].GetComponent<Image>().sprite = _keyInputsUp;
