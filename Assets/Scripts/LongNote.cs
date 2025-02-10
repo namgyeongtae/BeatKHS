@@ -11,28 +11,21 @@ public class LongNote : Note
 
     private int _targetCombo;
 
+    private bool _isMissed = false;
+
     public GameObject StartNote => _startNote;
     public GameObject BodyNote => _bodyNote;
     public GameObject EndNote => _endNote;
 
     public int TargetCombo => _targetCombo;
-    
+    public bool IsMissed => _isMissed;
+
     public override void Initialize(NoteData noteData, float speed, float targetTimeInSeconds, float distance, float judgementLineY)
     {
         base.Initialize(noteData, speed, targetTimeInSeconds, distance, judgementLineY);
 
         SetLongNote(_noteData);
     }
-    
-    /* void Start()
-    {
-        SetLongNote(_noteData);
-    }
-
-    void OnEnable()
-    {
-        SetLongNote(_noteData);
-    } */
     
     protected override void Update()
     {
@@ -43,15 +36,27 @@ public class LongNote : Note
         _endNote.GetComponent<RectTransform>().GetWorldCorners(noteCorners);
         float endNoteWorldY = noteCorners[1].y;  // 노트의 상단 Y좌표
 
+        _startNote.GetComponent<RectTransform>().GetWorldCorners(noteCorners);
+        float startNoteWorldY = noteCorners[1].y;
+
+        // startNote가 판정선 아래에 있는데
+        // 키 입력이 되어 있지 않고
+        // 롱노트가 미스되지 않았다면
+        // TODO : 롱노트가 TARGET_COMBO 이상의 콤보를 획득했는지 확인 
+        // 획득했다면 미스처리를 하지 않고
+        // 획득하지 못했다면 미스처리를 한다.
+        if (startNoteWorldY <= Define.NOTE_REMOVE_Y && !KeyInputManager.Instance.IsKeyInputDown[_noteData.lane] && !_isMissed)
+        {
+            _isMissed = true;
+            Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
+            Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
+        }
+
         // 판정선 도달 여부 확인 및 처리
         if (endNoteWorldY <= Define.NOTE_REMOVE_Y)
         {
             RemoveNote();
         }
-        /* if (_endNote.GetComponent<RectTransform>().anchoredPosition.y <= _judgementLineY)
-        {
-            RemoveNote();
-        } */
     }
 
     void SetLongNote(NoteData noteData)
