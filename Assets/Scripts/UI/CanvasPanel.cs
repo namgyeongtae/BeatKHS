@@ -9,6 +9,13 @@ public class CanvasPanel : UIBind
     public int CanvasPanelDepth { get; private set; } = 0;
     private Canvas _canvasComponent;
 
+    protected virtual void Initialize() { }
+
+    protected void Start()
+    {
+        Initialize();
+    }
+
     protected void SetCanvasComponent()
     {
         if (_canvasComponent == null)
