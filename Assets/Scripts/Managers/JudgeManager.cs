@@ -103,6 +103,9 @@ public class JudgeManager : MonoBehaviour
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
         }
 
+        Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(result);
+
+
         // Notes 리스트에서 제거
         if (MusicManager.Instance.Notes[lane].Count > 0)
         {
@@ -120,8 +123,14 @@ public class JudgeManager : MonoBehaviour
 
     public IEnumerator JudgeLongNote(LongNote targetNote, int lane)
     {
+        if (targetNote.IsMissed)
+        {
+            yield break;
+        }
+
         JudgeType result = JudgeType.Miss;
         
+
         // 노트의 위치를 스크린 좌표계로 변환
         Vector3[] noteCorners = new Vector3[4];
         targetNote.Rect.GetWorldCorners(noteCorners);
@@ -142,8 +151,10 @@ public class JudgeManager : MonoBehaviour
             Debug.Log("Miss or Bad Long Note");
             targetNote.SetNoteMiss();
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
+            Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(result);
             yield break;
         }
+
 
         var hitEffect = Managers.UI.ShowLongHitEffect(targetNote.transform);
 
@@ -184,6 +195,7 @@ public class JudgeManager : MonoBehaviour
             if (currentProgress >= nextComboThreshold && comboGained < targetNote.TargetCombo)
             {
                 Managers.UI.GetUI<ComboUI>("ComboUI").ComboEffect();
+                Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(result);
                 comboGained++;
             }
 
@@ -200,6 +212,7 @@ public class JudgeManager : MonoBehaviour
             targetNote.SetNoteMiss();
             // TODO : 콤보 카운트 초기화
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
+            Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
         }
         
         if (hitEffect != null)
