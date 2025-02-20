@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
         Instance = this;
         
         _managers.Init();
+
+        DontDestroyOnLoad(gameObject);
     }
 
     private void Update()

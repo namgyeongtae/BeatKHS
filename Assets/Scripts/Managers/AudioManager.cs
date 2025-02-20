@@ -28,6 +28,8 @@ public class AudioManager : MonoBehaviour
     private float _songLength = 0f;
     private uint _songLengthInMs = 0;
 
+    public BGM CurrentBGM = BGM.None;
+
     public bool IsPlaying => _isPlaying;
     public float SongPosition => _songPosition;
     public float SongLength => _songLength;
@@ -37,6 +39,8 @@ public class AudioManager : MonoBehaviour
     {
         Instance = this;
         InitializeAudio();
+
+        DontDestroyOnLoad(gameObject);
     }
 
     private void InitializeAudio()
