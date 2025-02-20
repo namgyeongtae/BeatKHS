@@ -1,8 +1,9 @@
 public enum BGM
 {
+    None,
     Tutorial,
     Altale,
-    Song2,
+    Only_For_You
     // 게임의 곡들 추가
 }
 
