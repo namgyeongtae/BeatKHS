@@ -88,7 +88,7 @@ public class AudioClipPlayerEditor : EditorWindow
         GUILayout.Space(10);
 
         DrawTimeline();
-        DrawLaneSelector();
+        // DrawLaneSelector();
         DrawNoteDataView();
 
         InputLaneHandler();
@@ -251,7 +251,7 @@ public class AudioClipPlayerEditor : EditorWindow
                         if (note.type == "LongNote")
                         {
                             float noteDuration = (note.duration / totalDuration) * zoomedWidth;
-                            EditorGUI.DrawRect(new Rect(noteX, laneY + 2, noteDuration, laneHeight - 4), new Color(1f, 0.5f, 0f, 0.5f));
+                            EditorGUI.DrawRect(new Rect(noteX, laneY + 2, noteDuration, laneHeight - 4), noteColor);
                         }
                         else
                         {
@@ -342,17 +342,6 @@ public class AudioClipPlayerEditor : EditorWindow
             float clickPosition = (mousePosition.x - timelineRect.x) / timelineRect.width;
             selectedNote.time = Mathf.Clamp(clickPosition * totalDuration, 0, totalDuration);
             
-            // 드래그 중일 때 해당 위치의 음악 재생
-            /* if (audioSource != null)
-            {
-                audioSource.time = selectedNote.time / 1000f;
-                if (!isPlaying)
-                {
-                    audioSource.Play();
-                    isPlaying = true;
-                }
-            } */
-            
             e.Use();
             Repaint();
         }
@@ -374,16 +363,18 @@ public class AudioClipPlayerEditor : EditorWindow
 
     private NoteData FindNoteNearPosition(Vector2 mousePosition, float totalDuration)
     {
-        float clickTime = ((mousePosition.x - timelineRect.x) / timelineRect.width) * totalDuration;
-        float closestDistance = 50f; // 클릭 허용 범위 (밀리초)
+        float clickTime = ((mousePosition.x + timelineScrollPosition.x) / (timelineLength * zoomLevel)) * totalDuration;
+        int clickLane = Mathf.FloorToInt(mousePosition.y / laneHeight);
+        float closestDistance = 1000f; // 클릭 허용 범위 (밀리초)
         NoteData closestNote = null;
 
-        foreach (var note in noteDataContainer.notes)
+        // 현재 레인의 노트들만 확인
+        foreach (var note in noteDataContainer.notes.Where(n => n.lane == clickLane))
         {
-            float distance = Mathf.Abs(note.time - clickTime);
-            if (distance < closestDistance)
+            float distanceX = Mathf.Abs(note.time - clickTime);
+            if (distanceX < closestDistance)
             {
-                closestDistance = distance;
+                closestDistance = distanceX;
                 closestNote = note;
             }
         }
