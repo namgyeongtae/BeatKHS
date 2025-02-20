@@ -11,7 +11,6 @@ public class UIBindBase : MonoBehaviour
     protected virtual void Awake()
     {
         InstallBindings();
-        Initialize();
     }
 
     public void InstallBindings()

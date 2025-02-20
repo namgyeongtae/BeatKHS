@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using FMODUnity;
 using System;
+using System.Security.Cryptography;
+using UnityEngine.UI;
+using DG.Tweening;
+using UnityEngine.SceneManagement;
 
 public class UILogo : CanvasPanel
 {
@@ -11,15 +15,25 @@ public class UILogo : CanvasPanel
     [SerializeField] private float minThreshold = 0.4f;   // 최소 임계값
     [SerializeField] private float maxThreshold = 0.8f;   // 최대 임계값
     [SerializeField] private float beatCooldown = 0.2f;   // 비트 감지 쿨다운 시간
+
+    private Image _image_Logo;
+    private UIButton _button_Logo;
     
     private Vector3 originalScale;
     private float currentPulse = 1f;
     private float lastBeatTime = -1f;
     private FMOD.ChannelGroup masterGroup;
     private FMOD.DSP spectrumDSP;
+
+    private bool _isClicked = false;
     
-    private void Start()
+    protected override void Start()
     {
+        _image_Logo = GetComponent<Image>();
+        _button_Logo = GetComponent<UIButton>();
+
+        _button_Logo.BindEvent(() => { StartCoroutine(OnClickLogo()); });
+
         originalScale = transform.localScale;
         
         RuntimeManager.CoreSystem.getMasterChannelGroup(out masterGroup);
@@ -29,9 +43,40 @@ public class UILogo : CanvasPanel
         masterGroup.addDSP(0, spectrumDSP);
         spectrumDSP.setParameterInt((int)FMOD.DSP_FFT.WINDOWTYPE, (int)FMOD.DSP_FFT_WINDOW.HANNING);
         spectrumDSP.setParameterInt((int)FMOD.DSP_FFT.WINDOWSIZE, 1024);
+
+        base.Start();
     }
     
     private void Update()
+    {
+        if (_isClicked)
+            return;
+
+        if (IsMouseOver())
+        {
+            _image_Logo.rectTransform.localScale = Vector3.one * 1.1f;
+        }
+        else
+        {
+            BounceByBeat();
+        }
+    }
+
+    private IEnumerator OnClickLogo()
+    {
+        _isClicked = true;
+
+        _image_Logo.rectTransform.localScale = Vector3.one * 1.1f;
+
+        var sceneAnimator = GameObject.Find("SceneAnimator").GetComponent<Animator>();
+        sceneAnimator.SetTrigger("FadeIn");
+
+        yield return new WaitForSeconds(0.5f);
+
+        SceneManager.LoadScene("SelectionScene");
+    }
+
+    private void BounceByBeat()
     {
         float intensity = GetAudioIntensity() * 1000;
         
@@ -78,7 +123,12 @@ public class UILogo : CanvasPanel
         
         return sum / sampleCount;
     }
-    
+
+    private bool IsMouseOver()
+    {
+        return RectTransformUtility.RectangleContainsScreenPoint(GetComponent<RectTransform>(), Input.mousePosition);
+    }
+
     private void OnDestroy()
     {
         if (spectrumDSP.hasHandle())
