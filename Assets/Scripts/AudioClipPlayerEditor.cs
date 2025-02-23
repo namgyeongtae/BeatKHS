@@ -313,11 +313,16 @@ public class AudioClipPlayerEditor : EditorWindow
     private void HandleTimelineClick(float totalDuration)
     {
         Event e = Event.current;
-        Vector2 adjustedMousePos = e.mousePosition + timelineScrollPosition;
         
-        if (e.type == EventType.MouseDown && timelineRect.Contains(adjustedMousePos))
+        if (e.type == EventType.MouseDown && timelineRect.Contains(e.mousePosition))
         {
-            float clickRatio = adjustedMousePos.x / (timelineLength * zoomLevel);
+            // 마우스 클릭 위치를 타임라인 내에서의 상대적 위치로 변환
+            float relativeX = e.mousePosition.x - timelineRect.x;
+            
+            // 타임라인 표시 영역의 너비에 대한 클릭 위치의 비율 계산
+            float clickRatio = relativeX / timelineRect.width;
+            
+            // 오디오 클립의 전체 길이에 비율을 적용하여 현재 시간 설정
             currentTime = clickRatio * totalDuration;
             
             if (audioSource != null)
@@ -375,6 +380,8 @@ public class AudioClipPlayerEditor : EditorWindow
 
     private NoteData FindNoteNearPosition(Vector2 mousePosition, float totalDuration)
     {
+        Debug.Log("FindNoteNearPosition");
+
         float clickTime = ((mousePosition.x + timelineScrollPosition.x) / (timelineLength * zoomLevel)) * totalDuration;
         int clickLane = Mathf.FloorToInt(mousePosition.y / laneHeight);
         float closestDistance = 1000f; // 클릭 허용 범위 (밀리초)
@@ -421,7 +428,10 @@ public class AudioClipPlayerEditor : EditorWindow
         if (audioSource != null)
         {
             audioSource.Stop();
+            audioSource.time = 0f;  // 오디오 소스의 시간을 0으로 초기화
+            currentTime = 0f;       // 에디터의 현재 시간도 0으로 초기화
             isPlaying = false;
+            Repaint();             // UI 업데이트
         }
     }
 
