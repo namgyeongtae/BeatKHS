@@ -71,6 +71,8 @@ public class AudioClipPlayerEditor : EditorWindow
         // 편집 모드 선택 드롭다운 추가
         currentEditMode = (EditMode)EditorGUILayout.EnumPopup("Edit Mode", currentEditMode);
 
+        
+
         // 오디오 클립 드롭다운 슬롯
         audioClip = (AudioClip)EditorGUILayout.ObjectField("Audio Clip", audioClip, typeof(AudioClip), false);
 
@@ -88,9 +90,19 @@ public class AudioClipPlayerEditor : EditorWindow
         GUILayout.Space(10);
 
         DrawTimeline();
+
+        // NoteEdit 모드일 때 선택된 노트 삭제 버튼 표시
+        if (currentEditMode == EditMode.NoteEdit && selectedNote != null)
+        {
+            if (GUILayout.Button("Remove Selected Note"))
+            {
+                noteDataContainer.notes.Remove(selectedNote);
+                selectedNote = null;
+                Repaint();
+            }
+        }
         // DrawLaneSelector();
         DrawNoteDataView();
-
         InputLaneHandler();
     }
 
@@ -355,7 +367,7 @@ public class AudioClipPlayerEditor : EditorWindow
                     audioSource.Stop();
                     isPlaying = false;
                 } */
-                selectedNote = null;
+                // selectedNote = null;
                 e.Use();
             }
         }
@@ -380,6 +392,13 @@ public class AudioClipPlayerEditor : EditorWindow
         }
 
         return closestNote;
+    }
+
+    private void RemoveSelectedNote()
+    {
+        noteDataContainer.notes.Remove(selectedNote);
+        selectedNote = null;
+        Repaint();
     }
 
     private void PlayAudioClip()
@@ -460,9 +479,33 @@ public class AudioClipPlayerEditor : EditorWindow
         string path = EditorUtility.SaveFilePanel("Save Notes", "", "NoteData.json", "json");
         if (!string.IsNullOrEmpty(path))
         {
-            string json = JsonUtility.ToJson(noteDataContainer, true);
+            // 중복 제거를 위한 임시 리스트 생성
+            var uniqueNotes = new List<NoteData>();
+            var existingTimeAndLanes = new HashSet<string>();
+
+            foreach (var note in noteDataContainer.notes)
+            {
+                // time과 lane을 조합한 고유 키 생성
+                string key = $"{note.time}_{note.lane}";
+                
+                // 이미 존재하지 않는 경우에만 추가
+                if (!existingTimeAndLanes.Contains(key))
+                {
+                    uniqueNotes.Add(note);
+                    existingTimeAndLanes.Add(key);
+                }
+            }
+
+            // 중복이 제거된 노트들로 임시 컨테이너 생성
+            var tempContainer = new NoteDataContainer { notes = uniqueNotes };
+            
+            string json = JsonUtility.ToJson(tempContainer, true);
             File.WriteAllText(path, json);
-            Debug.Log("노트 데이터가 저장되었습니다: " + path);
+            
+            // 원본 노트 데이터도 업데이트
+            noteDataContainer.notes = uniqueNotes;
+            
+            Debug.Log("중복이 제거된 노트 데이터가 저장되었습니다: " + path);
         }
     }
 
