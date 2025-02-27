@@ -380,25 +380,30 @@ public class AudioClipPlayerEditor : EditorWindow
 
     private NoteData FindNoteNearPosition(Vector2 mousePosition, float totalDuration)
     {
-        Debug.Log("FindNoteNearPosition");
-
-        float clickTime = ((mousePosition.x + timelineScrollPosition.x) / (timelineLength * zoomLevel)) * totalDuration;
         int clickLane = Mathf.FloorToInt(mousePosition.y / laneHeight);
-        float closestDistance = 1000f; // 클릭 허용 범위 (밀리초)
-        NoteData closestNote = null;
+        
+        // HandleTimelineClick과 동일한 방식으로 클릭 시간 계산
+        float relativeX = mousePosition.x;
+        float clickRatio = relativeX / (timelineLength * zoomLevel);
+        float clickTime = clickRatio * totalDuration;
+        
+        Debug.Log($"Click Time: {clickTime}");
 
-        // 현재 레인의 노트들만 확인
         foreach (var note in noteDataContainer.notes.Where(n => n.lane == clickLane))
         {
-            float distanceX = Mathf.Abs(note.time - clickTime);
-            if (distanceX < closestDistance)
+            float noteEndTime = note.type == "LongNote" ? 
+                note.time + note.duration : // 롱노트는 duration을 더한 시간
+                note.time + 100f;          // 일반 노트는 약간의 여유를 둠
+            
+            Debug.Log($"Note Time: {note.time}, End Time: {noteEndTime}, Click Time: {clickTime}");
+            
+            if (clickTime >= note.time && clickTime <= noteEndTime)
             {
-                closestDistance = distanceX;
-                closestNote = note;
+                return note;
             }
         }
 
-        return closestNote;
+        return null;
     }
 
     private void RemoveSelectedNote()

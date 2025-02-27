@@ -58,8 +58,10 @@ public class UILogo : CanvasPanel
         }
         else
         {
-            BounceByBeat();
+            _image_Logo.rectTransform.localScale = Vector3.one;
         }
+
+        BounceByBeat();
     }
 
     private IEnumerator OnClickLogo()
@@ -71,9 +73,9 @@ public class UILogo : CanvasPanel
         var sceneAnimator = GameObject.Find("SceneAnimator").GetComponent<Animator>();
         sceneAnimator.SetTrigger("FadeIn");
 
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(2f);
 
-        SceneManager.LoadScene("SelectionScene");
+        SceneManager.LoadSceneAsync("SelectionScene");
     }
 
     private void BounceByBeat()
@@ -97,7 +99,8 @@ public class UILogo : CanvasPanel
         }
         
         // 크기 적용
-        GetComponent<RectTransform>().localScale = originalScale * currentPulse;
+        var rectTr = GetComponent<RectTransform>();
+        rectTr.localScale = rectTr.localScale * currentPulse;
     }
     
     private float GetAudioIntensity()

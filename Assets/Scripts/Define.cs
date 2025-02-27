@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Define : MonoBehaviour
 {
-    public const float NOTE_REMOVE_Y = 500f;
+    public const float NOTE_REMOVE_Y = 100;
 
     public const float MULTIPLIER_SEC_TO_MS = 1000f;
 }

@@ -86,7 +86,7 @@ public class JudgeManager : MonoBehaviour
         {
             if (_timingBoxs[y].x <= t_notePosY && t_notePosY <= _timingBoxs[y].y)
             {
-                Debug.Log("Hit " + _judgeTypeList[y].ToString());
+                Debug.Log("Result " + _judgeTypeList[y].ToString());
                 result = _judgeTypeList[y];
                 break;
             }
@@ -145,6 +145,8 @@ public class JudgeManager : MonoBehaviour
                 break;
             }
         }
+
+        targetNote.SetNoteJudged();
 
         if (result == JudgeType.Miss || result == JudgeType.Bad)
         {
@@ -206,7 +208,7 @@ public class JudgeManager : MonoBehaviour
         // TODO : 키를 놓았을 때 EndNote의 위치를 확인하여 또 판정을 내려야 한다.
         // 적절한 위치에서 롱노트를 떼지 못하면 miss 혹은 bad 판정을 내려서 노트에 투명도를 부여하고 
         // 콤보 카운트를 초기화 해야한다.
-        if (endNotePosY > _timingBoxs[0].y)
+        if (endNotePosY > _timingBoxs[2].y)
         {
             Debug.Log("Miss Long Note");
             targetNote.SetNoteMiss();

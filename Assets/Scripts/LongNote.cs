@@ -12,6 +12,7 @@ public class LongNote : Note
     private int _targetCombo;
 
     private bool _isMissed = false;
+    private bool _isJudged = false;
 
     public GameObject StartNote => _startNote;
     public GameObject BodyNote => _bodyNote;
@@ -19,6 +20,7 @@ public class LongNote : Note
 
     public int TargetCombo => _targetCombo;
     public bool IsMissed => _isMissed;
+    public bool IsJudged => _isJudged;
 
     public override void Initialize(NoteData noteData, float speed, float targetTimeInSeconds, float distance, float judgementLineY)
     {
@@ -45,8 +47,9 @@ public class LongNote : Note
         // TODO : 롱노트가 TARGET_COMBO 이상의 콤보를 획득했는지 확인 
         // 획득했다면 미스처리를 하지 않고
         // 획득하지 못했다면 미스처리를 한다.
-        if (startNoteWorldY <= Define.NOTE_REMOVE_Y && !KeyInputManager.Instance.IsKeyInputDown[_noteData.lane] && !_isMissed)
+        if (startNoteWorldY <= Define.NOTE_REMOVE_Y && !KeyInputManager.Instance.IsKeyInputDown[_noteData.lane] && !_isMissed && !_isJudged)
         {
+            Debug.Log("LongNote Miss");
             _isMissed = true;
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
             Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
@@ -79,8 +82,8 @@ public class LongNote : Note
         sizeDelta.y = adjustedLength;
         noteRect.sizeDelta = sizeDelta;
 
-        var endPosY = noteRect.anchoredPosition.y + noteRect.sizeDelta.y;
-        _endNote.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, endPosY);
+        var endPosY = noteRect.localPosition.y + noteRect.sizeDelta.y - _endNote.GetComponent<RectTransform>().sizeDelta.y;
+        _endNote.GetComponent<RectTransform>().localPosition = new Vector2(0, endPosY);
 
         // targetCombo 계산
         // 예: 매 0.1초마다 1콤보씩 증가
@@ -89,6 +92,11 @@ public class LongNote : Note
         
         // 최소 콤보 보장
         _targetCombo = Mathf.Max(_targetCombo, 1);
+    }
+
+    public void SetNoteJudged()
+    {
+        _isJudged = true;
     }
 
     public void SetNoteMiss()

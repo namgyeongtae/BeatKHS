@@ -13,8 +13,8 @@ public class NoteGenerator : MonoBehaviour
 
     [SerializeField] private float _timeOffset;
 
-    private float _noteSpeed = 2000f;
-    private string _musicJsonPath = "Assets/Resources/Music/Altale.json";
+    private float _noteSpeed = 3000f;
+    private string _musicJsonPath = "Assets/Resources/Music/Only_For_You.json";
     private bool _isPlaying = false;
     private float _playStartTime;
     private List<NoteData> _remainingNotes;
@@ -31,6 +31,9 @@ public class NoteGenerator : MonoBehaviour
     
     private void LoadNoteData()
     {
+        var bgm = (AudioManager.Instance.CurrentBGM == BGM.None) ? BGM.Only_For_You : AudioManager.Instance.CurrentBGM;
+
+        _musicJsonPath = $"Assets/Resources/Music/{bgm}.json";
         string jsonText = Resources.Load<TextAsset>(_musicJsonPath.Replace("Assets/Resources/", "").Replace(".json", "")).text;
         NoteDataContainer noteDataContainer = JsonUtility.FromJson<NoteDataContainer>(jsonText);
         _remainingNotes = new List<NoteData>(noteDataContainer.notes);
@@ -41,7 +44,9 @@ public class NoteGenerator : MonoBehaviour
     
     private void StartMusicAndNoteGeneration()
     {
-        AudioManager.Instance.LoadSong(BGM.Altale);
+        var bgm = (AudioManager.Instance.CurrentBGM == BGM.None) ? BGM.Only_For_You : AudioManager.Instance.CurrentBGM;
+
+        AudioManager.Instance.LoadSong(bgm);
         AudioManager.Instance.PlaySong();
         _playStartTime = Time.time;
         _isPlaying = true;

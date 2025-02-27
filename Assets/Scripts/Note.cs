@@ -37,6 +37,7 @@ public class Note : MonoBehaviour
         // 화면 밖으로 완전히 벗어났을 때만 제거
         if (noteWorldY < Define.NOTE_REMOVE_Y)  // 적절한 값으로 조정하세요
         {
+            Debug.Log("Result Miss");
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
             Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
             RemoveNote();
