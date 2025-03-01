@@ -15,12 +15,16 @@ public class JudgeUI : CanvasPanel
     private Image _currentImage = null;
     private JudgeType _currentJudgeType = JudgeType.Perfect;
 
+    private Vector3 _originalJudgeImagePosition;
+
     protected override void Initialize()
     {
         _judgeTypeCount.Add(JudgeType.Perfect, 0);
         _judgeTypeCount.Add(JudgeType.Good, 0);
         _judgeTypeCount.Add(JudgeType.Bad, 0);
         _judgeTypeCount.Add(JudgeType.Miss, 0);
+
+        _originalJudgeImagePosition = _perfect.transform.localPosition;
     }
 
     public void SetJudgeImage(JudgeType judgeType)
@@ -54,19 +58,17 @@ public class JudgeUI : CanvasPanel
                 break;
         }
 
-        Vector3 originalPos = _currentImage.transform.localPosition;
-
         _currentImage.DOKill();
 
         // 살짝 아래로 이동 후 튀어오르는 애니메이션
-        _currentImage.transform.DOLocalMoveY(originalPos.y - 10f, 0.05f)
+        _currentImage.transform.DOLocalMoveY(_originalJudgeImagePosition.y - 10f, 0.05f)
                             .SetEase(Ease.OutQuad)
                             .OnComplete(() =>
                             {
-                                _currentImage.transform.DOLocalMoveY(originalPos.y, 0.1f).SetEase(Ease.OutBounce);
+                                _currentImage.transform.DOLocalMoveY(_originalJudgeImagePosition.y, 0.1f).SetEase(Ease.OutBounce);
                             })
                             .OnKill(() => {
-                                _currentImage.transform.localPosition = originalPos;
+                                _currentImage.transform.localPosition = _originalJudgeImagePosition;
                             });
 
         // 크기 약간 변화 (강조 효과)

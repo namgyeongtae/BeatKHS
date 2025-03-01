@@ -11,6 +11,14 @@ public class ComboUI : CanvasPanel
     [Bind("Combo")] private TextMeshProUGUI _combo;
 
     private int _currentCombo = 0;
+    private Vector3 _originalComboTextPosition;
+
+    protected override void Initialize()
+    {
+        base.Initialize();
+
+        _originalComboTextPosition = _comboText.transform.localPosition;
+    }
 
     public void ComboEffect()
     {
@@ -19,16 +27,19 @@ public class ComboUI : CanvasPanel
 
         _combo.text = _currentCombo.ToString();
 
-        _comboText.DOKill();
-
-        Vector3 originalPos = _comboText.transform.localPosition;
+        // 모든 진행 중인 트윈 애니메이션 정리
+        _comboText.transform.DOKill();
+        
+        // 시작 전 위치 리셋
+        _comboText.transform.localPosition = _originalComboTextPosition;
+        _comboText.transform.localScale = Vector3.one;
 
         // 살짝 아래로 이동 후 튀어오르는 애니메이션
-        _comboText.transform.DOLocalMoveY(originalPos.y - 10f, 0.05f)
+        _comboText.transform.DOLocalMoveY(_originalComboTextPosition.y - 10f, 0.05f)
                             .SetEase(Ease.OutQuad)
                             .OnComplete(() =>
                             {
-                                _comboText.transform.DOLocalMoveY(originalPos.y, 0.1f).SetEase(Ease.OutBounce);
+                                _comboText.transform.DOLocalMoveY(_originalComboTextPosition.y, 0.1f).SetEase(Ease.OutBounce);
                             });
 
         // 크기 약간 변화 (강조 효과)
