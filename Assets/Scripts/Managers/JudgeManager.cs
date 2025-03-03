@@ -208,13 +208,30 @@ public class JudgeManager : MonoBehaviour
         // TODO : 키를 놓았을 때 EndNote의 위치를 확인하여 또 판정을 내려야 한다.
         // 적절한 위치에서 롱노트를 떼지 못하면 miss 혹은 bad 판정을 내려서 노트에 투명도를 부여하고 
         // 콤보 카운트를 초기화 해야한다.
-        if (endNotePosY > _timingBoxs[2].y)
+        JudgeType endNoteResult = JudgeType.Miss;
+        
+        // endNote의 위치에 따른 판정
+        for (int y = _timingBoxs.Length - 1; y >= 0; y--)
         {
-            Debug.Log("Miss Long Note");
+            if (_timingBoxs[y].x <= endNotePosY && endNotePosY <= _timingBoxs[y].y)
+            {
+                endNoteResult = _judgeTypeList[y];
+                break;
+            }
+        }
+
+        if (endNoteResult == JudgeType.Miss || endNoteResult == JudgeType.Bad)
+        {
+            Debug.Log($"Long Note End Judge: {endNoteResult}");
             targetNote.SetNoteMiss();
-            // TODO : 콤보 카운트 초기화
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
-            Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
+            Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(endNoteResult);
+        }
+        else
+        {
+            // Perfect나 Good 판정일 경우 마지막 콤보 추가
+            Managers.UI.GetUI<ComboUI>("ComboUI").ComboEffect();
+            Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(endNoteResult);
         }
         
         if (hitEffect != null)
