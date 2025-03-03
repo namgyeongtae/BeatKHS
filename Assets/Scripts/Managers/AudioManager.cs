@@ -111,12 +111,13 @@ public class AudioManager : MonoBehaviour
         _songPosition = 0f;
     }
 
-    public void PlaySong(float startTime = 0f)
+    public void PlaySong(bool loop = false, float startTime = 0f)
     {
         if (!_bgmChannel.hasHandle()) return;
         
         _bgmChannel.setPosition((uint)(startTime * 1000), FMOD.TIMEUNIT.MS);
         _bgmChannel.setPaused(false);
+        _bgmChannel.setLoopCount(loop ? -1 : 0);
         _isPlaying = true;
     }
 
