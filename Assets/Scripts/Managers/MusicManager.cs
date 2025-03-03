@@ -9,6 +9,8 @@ public class MusicManager : MonoBehaviour
 
     public List<List<Note>> Notes = new List<List<Note>>();
 
+    private bool _isEndMusic = false;
+
     void Awake()
     {
         Instance = this;
@@ -17,6 +19,16 @@ public class MusicManager : MonoBehaviour
     void Start()
     {
         InitNoteList();
+    }
+
+    void Update()
+    {
+        if (IsEndMusic() && !_isEndMusic)
+        {
+            Debug.Log("Music End");
+            Managers.Scene.LoadScene("SelectionScene").Forget();
+            _isEndMusic = true;
+        }
     }
 
     void InitNoteList()
@@ -28,5 +40,14 @@ public class MusicManager : MonoBehaviour
         {
             Notes.Add(new List<Note>());
         }
+    }
+
+    private bool IsEndMusic()
+    {
+        if (AudioManager.Instance.SongPosition >= AudioManager.Instance.SongLength)
+        {
+            return true;
+        }
+        return false;
     }
 }
