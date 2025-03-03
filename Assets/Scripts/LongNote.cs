@@ -32,7 +32,8 @@ public class LongNote : Note
     protected override void Update()
     {
         // 노트를 아래로 이동
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        // transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        Rect.anchoredPosition += Vector2.down * _speed * Time.deltaTime;
         
         Vector3[] noteCorners = new Vector3[4];
         _endNote.GetComponent<RectTransform>().GetWorldCorners(noteCorners);

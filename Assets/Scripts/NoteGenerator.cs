@@ -13,7 +13,6 @@ public class NoteGenerator : MonoBehaviour
 
     [SerializeField] private float _timeOffset;
 
-    private float _noteSpeed = 3000f;
     private string _musicJsonPath = "Assets/Resources/Music/Only_For_You.json";
     private bool _isPlaying = false;
     private float _playStartTime;
@@ -72,7 +71,7 @@ public class NoteGenerator : MonoBehaviour
         double distanceToTravel = Mathf.Abs(_noteSpawnPoint.GetComponent<RectTransform>().anchoredPosition.y - _metronomeBar.anchoredPosition.y);
         
         // 거리와 속도로 이동 시간 계산 (초 단위)
-        double travelTimeInSeconds = distanceToTravel / _noteSpeed;
+        double travelTimeInSeconds = distanceToTravel / Setting.NOTE_SPEED;
         // ms 단위로 변환
         double travelTimeInMs = travelTimeInSeconds * Define.MULTIPLIER_SEC_TO_MS;
 
@@ -112,7 +111,7 @@ public class NoteGenerator : MonoBehaviour
         noteRect.anchoredPosition = new Vector2(0, _noteSpawnPoint.GetComponent<RectTransform>().anchoredPosition.y);
 
         LongNote longNoteComponent = note.GetComponent<LongNote>();
-        longNoteComponent.Initialize(noteData, _noteSpeed, noteData.time / 1000, noteRect.anchoredPosition.y, _judgementLineY);
+        longNoteComponent.Initialize(noteData, Setting.NOTE_SPEED, noteData.time / 1000, noteRect.anchoredPosition.y, _judgementLineY);
     }
 
     private void SpawnShortNote(NoteData noteData)
@@ -125,6 +124,6 @@ public class NoteGenerator : MonoBehaviour
         noteRect.anchoredPosition = new Vector2(0, _noteSpawnPoint.GetComponent<RectTransform>().anchoredPosition.y);
             
         Note noteComponent = note.GetComponent<Note>();
-        noteComponent.Initialize(noteData, _noteSpeed, noteData.time / 1000f, noteRect.anchoredPosition.y, _judgementLineY);
+        noteComponent.Initialize(noteData, Setting.NOTE_SPEED, noteData.time / 1000f, noteRect.anchoredPosition.y, _judgementLineY);
     }
 }

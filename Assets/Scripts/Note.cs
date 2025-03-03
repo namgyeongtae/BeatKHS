@@ -27,7 +27,8 @@ public class Note : MonoBehaviour
     protected virtual void Update()
     {
         // 노트를 아래로 이동
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        // transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        Rect.anchoredPosition += Vector2.down * _speed * Time.deltaTime;
 
         // 화면 밖으로 완전히 벗어났는지만 체크
         Vector3[] noteCorners = new Vector3[4];
