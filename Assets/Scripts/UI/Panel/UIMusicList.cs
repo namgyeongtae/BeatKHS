@@ -27,6 +27,8 @@ public class UIMusicList : CanvasPanel
     private VideoPlayer _videoPlayer;
     private Coroutine _videoChangeCoroutine;
 
+    public UIMusicSelection SelectedMusic => _selectedMusic;
+
     protected override void Start()
     {
         base.Start();
@@ -56,12 +58,6 @@ public class UIMusicList : CanvasPanel
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             Scroll(_scrollStep);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            AudioManager.Instance.CurrentBGM = Enum.Parse<BGM>(_selectedMusic.MusicData.clip);
-            SceneManager.LoadScene("InGameScene");
         }
     }
 
