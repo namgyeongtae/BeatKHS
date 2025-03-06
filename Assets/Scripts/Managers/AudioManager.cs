@@ -45,6 +45,10 @@ public class AudioManager : MonoBehaviour
 
     private void InitializeAudio()
     {
+        // FMOD 백그라운드 재생 설정
+        FMODUnity.RuntimeManager.CoreSystem.setDSPBufferSize(1024, 10);
+        FMODUnity.RuntimeManager.CoreSystem.setStreamBufferSize(32768, FMOD.TIMEUNIT.RAWBYTES);
+        
         // BGM 채널 그룹 생성
         _bgmChannelGroup = new FMOD.ChannelGroup();
         LoadBGM();
@@ -99,7 +103,7 @@ public class AudioManager : MonoBehaviour
         int bgmIndex = (int)bgm;
         FMOD.Sound sound = _bgms[bgmIndex];
         
-        sound.setMode(FMOD.MODE.DEFAULT);
+        sound.setMode(FMOD.MODE.DEFAULT | FMOD.MODE.CREATESTREAM | FMOD.MODE.IGNORETAGS);
 
         // 곡 길이 가져오기
         sound.getLength(out _songLengthInMs, FMOD.TIMEUNIT.MS);
