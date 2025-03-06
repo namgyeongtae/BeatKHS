@@ -10,6 +10,7 @@ public class JudgeManager : MonoBehaviour
 
     [SerializeField] private RectTransform _center = null;
     [SerializeField] private RectTransform[] _timingRect = null;
+    private float test = 0f;
 
     private JudgeType[] _judgeTypeList = { JudgeType.Bad, JudgeType.Good, JudgeType.Perfect };
 
