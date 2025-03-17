@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class AudioManager : MonoBehaviour
+public class AudioManager : Manager
 {
-    public static AudioManager Instance;
-
     [Header("BGM")]
     private FMOD.ChannelGroup _bgmChannelGroup;
     private FMOD.Sound[] _bgms;
@@ -18,9 +16,9 @@ public class AudioManager : MonoBehaviour
     private FMOD.Channel[] _sfxChannels;
 
     [Header("Audio Settings")]
-    [SerializeField, Range(0f, 1f)] private float _bgmVolume = 0.5f;
-    [SerializeField, Range(0f, 1f)] private float _sfxVolume = 0.5f;
-    [SerializeField] private float _offset = 0f; // 노트 타이밍 오프셋
+    private float _bgmVolume = 0.5f;
+    private float _sfxVolume = 0.5f;
+    private float _offset = 0f; // 노트 타이밍 오프셋
 
     private double _dspStartTime;  // 음악 시작 시의 DSP 시간
     private bool _isPlaying = false;
@@ -35,12 +33,9 @@ public class AudioManager : MonoBehaviour
     public float SongLength => _songLength;
     public float SongProgress => _songPosition / _songLength;
 
-    private void Awake()
+    public override void Init()
     {
-        Instance = this;
         InitializeAudio();
-
-        DontDestroyOnLoad(gameObject);
     }
 
     private void InitializeAudio()
@@ -133,6 +128,15 @@ public class AudioManager : MonoBehaviour
         _isPlaying = false;
     }
 
+    public override void Clear()
+    {
+        if (_bgmChannel.hasHandle())
+            _bgmChannel.stop();
+
+        _bgms = null;
+
+    }
+
     public void ResumeSong()
     {
         if (!_bgmChannel.hasHandle()) return;
@@ -150,7 +154,7 @@ public class AudioManager : MonoBehaviour
         _songPosition = 0f;
     }
 
-    private void Update()
+    public override void Update()
     {
         if (_isPlaying && _bgmChannel.hasHandle())
         {

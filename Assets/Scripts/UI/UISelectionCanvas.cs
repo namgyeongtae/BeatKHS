@@ -17,7 +17,7 @@ public class UISelectionCanvas : CanvasPanel
 
         _playButton.BindEvent(() => { 
         
-            AudioManager.Instance.CurrentBGM = Enum.Parse<BGM>(_musicList.SelectedMusic.MusicData.clip);
+            Managers.Audio.CurrentBGM = Enum.Parse<BGM>(_musicList.SelectedMusic.MusicData.clip);
             SceneManager.LoadScene("InGameScene");
         });
     }

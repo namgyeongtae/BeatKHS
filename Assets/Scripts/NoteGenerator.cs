@@ -30,7 +30,7 @@ public class NoteGenerator : MonoBehaviour
     
     private void LoadNoteData()
     {
-        var bgm = (AudioManager.Instance.CurrentBGM == BGM.None) ? BGM.Only_For_You : AudioManager.Instance.CurrentBGM;
+        var bgm = (Managers.Audio.CurrentBGM == BGM.None) ? BGM.Only_For_You : Managers.Audio.CurrentBGM;
 
         _musicJsonPath = $"Assets/Resources/Music/{bgm}.json";
         string jsonText = Resources.Load<TextAsset>(_musicJsonPath.Replace("Assets/Resources/", "").Replace(".json", "")).text;
@@ -43,10 +43,10 @@ public class NoteGenerator : MonoBehaviour
     
     private void StartMusicAndNoteGeneration()
     {
-        var bgm = (AudioManager.Instance.CurrentBGM == BGM.None) ? BGM.Only_For_You : AudioManager.Instance.CurrentBGM;
+        var bgm = (Managers.Audio.CurrentBGM == BGM.None) ? BGM.Only_For_You : Managers.Audio.CurrentBGM;
 
-        AudioManager.Instance.LoadSong(bgm);
-        AudioManager.Instance.PlaySong();
+        Managers.Audio.LoadSong(bgm);
+        Managers.Audio.PlaySong();
         _playStartTime = Time.time;
         _isPlaying = true;
     }
@@ -55,7 +55,7 @@ public class NoteGenerator : MonoBehaviour
     {
         if (!_isPlaying || _remainingNotes.Count == 0) return;
         
-        float currentMusicTime = AudioManager.Instance.GetCurrentTime();
+        float currentMusicTime = Managers.Audio.GetCurrentTime();
 
         // 생성해야 할 노트들 확인
         while (_remainingNotes.Count > 0 && ShouldSpawnNote(_remainingNotes[0], currentMusicTime))

@@ -172,11 +172,10 @@ public class JudgeManager : MonoBehaviour
         // 레인에 해당하는 키를 누르는 동안안
         while (KeyInputManager.Instance.IsKeyInputDown[lane])
         {
-            // 매 프레임마다 엔드 노트의 현재 스크린 좌표 업데이트ㅋ`
+            // 매 프레임마다 엔드 노트의 현재 스크린 좌표 업데이트
             targetNote.EndNote.GetComponent<RectTransform>().GetWorldCorners(endNoteCorners);
             endNotePosY = endNoteCorners[0].y;
 
-            Debug.Log($"EndNotePos : {endNotePosY}, T_NotePosY : {t_notePosY}");
             if (targetNote == null || !targetNote.gameObject.activeInHierarchy)
             {
                 Debug.Log("End Note is out of range");
@@ -206,7 +205,7 @@ public class JudgeManager : MonoBehaviour
         }
 
         // 키를 놓았을 때의 처리
-        // TODO : 키를 놓았을 때 EndNote의 위치를 확인하여 또 판정을 내려야 한다.
+        // 키를 놓았을 때 EndNote의 위치를 확인하여 또 판정을 내려야 한다.
         // 적절한 위치에서 롱노트를 떼지 못하면 miss 혹은 bad 판정을 내려서 노트에 투명도를 부여하고 
         // 콤보 카운트를 초기화 해야한다.
         JudgeType endNoteResult = JudgeType.Miss;
@@ -241,8 +240,6 @@ public class JudgeManager : MonoBehaviour
             Managers.Resource.Destroy(hitEffect);
         }
 
-        // TODO
-        // 현재 키 입력을 떼기만 해도 제거하고 있는 상황 
         // 롱노트는 endNote가 판정선 아래로 내려가야지만 파괴 되야 한다.
         // 키를 놓았을 때의 처리
         if (MusicManager.Instance.Notes[lane].Count > 0)

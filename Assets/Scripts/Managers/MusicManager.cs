@@ -44,7 +44,7 @@ public class MusicManager : MonoBehaviour
 
     private bool IsEndMusic()
     {
-        if (AudioManager.Instance.SongPosition >= AudioManager.Instance.SongLength)
+        if (Managers.Audio.SongPosition >= Managers.Audio.SongLength)
         {
             return true;
         }

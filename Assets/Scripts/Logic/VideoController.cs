@@ -13,7 +13,7 @@ public class VideoController : MonoBehaviour
     {
         _videoPlayer = GetComponent<VideoPlayer>();
 
-        var videoName = Managers.Data.MusicList.FirstOrDefault(music => music.clip == AudioManager.Instance.CurrentBGM.ToString())?.video;
+        var videoName = Managers.Data.MusicList.FirstOrDefault(music => music.clip == Managers.Audio.CurrentBGM.ToString())?.video;
 
         PlayVideo(videoName);
     }
