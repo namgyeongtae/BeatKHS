@@ -46,6 +46,8 @@ public class MusicManager : MonoBehaviour
     {
         if (Managers.Audio.SongPosition >= Managers.Audio.SongLength)
         {
+            Managers.Audio.Clear();
+            Managers.Score.Clear();
             return true;
         }
         return false;

@@ -21,4 +21,9 @@ public class GameManager : MonoBehaviour
     {
         _managers.Update();
     }
+
+    public void Clear()
+    {
+        _managers.Clear();
+    }
 }

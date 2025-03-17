@@ -83,6 +83,8 @@ public class JudgeManager : MonoBehaviour
 
         JudgeType result = JudgeType.Miss;
 
+        // 판정선과의 거리계산
+        // 노트와의 거리가 가장 가까운 판정선을 찾아서 판정
         for (int y = _timingBoxs.Length - 1; y >= 0; y--)
         {
             if (_timingBoxs[y].x <= t_notePosY && t_notePosY <= _timingBoxs[y].y)
@@ -92,6 +94,9 @@ public class JudgeManager : MonoBehaviour
                 break;
             }
         }
+
+        // 판정 점수 계산
+        Managers.Score.AddScore(result);
 
         // 콤보 이펙트
         if (result != JudgeType.Miss && result != JudgeType.Bad)
@@ -103,7 +108,7 @@ public class JudgeManager : MonoBehaviour
         {
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
         }
-
+        // 판정 UI 설정
         Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(result);
 
 
@@ -196,6 +201,7 @@ public class JudgeManager : MonoBehaviour
             // 진행도가 다음 콤보 획득 시점을 넘었다면 콤보 증가
             if (currentProgress >= nextComboThreshold && comboGained < targetNote.TargetCombo)
             {
+                Managers.Score.AddScore(result);
                 Managers.UI.GetUI<ComboUI>("ComboUI").ComboEffect();
                 Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(result);
                 comboGained++;
