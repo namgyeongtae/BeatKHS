@@ -16,6 +16,8 @@ public class UILogo : CanvasPanel
     [SerializeField] private float maxThreshold = 0.8f;   // 최대 임계값
     [SerializeField] private float beatCooldown = 0.2f;   // 비트 감지 쿨다운 시간
 
+    [SerializeField] private UILogin _loginPanel;
+
     private Image _image_Logo;
     private UIButton _button_Logo;
     
@@ -32,7 +34,8 @@ public class UILogo : CanvasPanel
         _image_Logo = GetComponent<Image>();
         _button_Logo = GetComponent<UIButton>();
 
-        _button_Logo.BindEvent(() => { StartCoroutine(OnClickLogo()); });
+        // _button_Logo.BindEvent(() => { StartCoroutine(OnClickLogo()); });
+        _button_Logo.BindEvent(OnClickLogo);
 
         originalScale = transform.localScale;
         
@@ -64,18 +67,20 @@ public class UILogo : CanvasPanel
         BounceByBeat();
     }
 
-    private IEnumerator OnClickLogo()
+    private void OnClickLogo()
     {
         _isClicked = true;
 
         _image_Logo.rectTransform.localScale = Vector3.one * 1.1f;
 
-        var sceneAnimator = GameObject.Find("SceneAnimator").GetComponent<Animator>();
+        _loginPanel.GetComponent<RectTransform>().DOLocalMoveX(-455, 0.5f);
+
+        /* var sceneAnimator = GameObject.Find("SceneAnimator").GetComponent<Animator>();
         sceneAnimator.SetTrigger("FadeIn");
 
         yield return new WaitForSeconds(2f);
 
-        SceneManager.LoadSceneAsync("SelectionScene");
+        SceneManager.LoadSceneAsync("SelectionScene"); */
     }
 
     private void BounceByBeat()
