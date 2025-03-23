@@ -5,3 +5,14 @@ Logs
 Assembly-CSharp.csproj
 *.csproj
 UserSettings
+fmod_editor.log
+Assets/Editor Default Resources
+Assets/ExternalDependencyManager
+Assets/Firebase
+Assets/Editor Default Resources.meta
+Assets/ExternalDependencyManager.meta
+Assets/Firebase.meta
+Assets/Plugins/iOS
+Assets/Plugins/tvOS
+Assets/Plugins/iOS.meta
+Assets/Plugins/tvOS.meta
