@@ -23,11 +23,12 @@ public class MusicManager : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("MusicManager Update Running");
+
         if (IsEndMusic() && !_isEndMusic)
         {
-            Debug.Log("Music End");
-            Managers.Scene.LoadScene("SelectionScene").Forget();
-            _isEndMusic = true;
+            Debug.Log("Starting EndMusic Coroutine");
+            StartCoroutine(EndMusic());
         }
     }
 
@@ -44,12 +45,38 @@ public class MusicManager : MonoBehaviour
 
     private bool IsEndMusic()
     {
-        if (Managers.Audio.SongPosition >= Managers.Audio.SongLength)
+        // 모든 노트가 처리되었는지 확인
+        bool allNotesProcessed = true;
+        foreach (var laneNotes in Notes)
         {
-            Managers.Audio.Clear();
-            Managers.Score.Clear();
-            return true;
+            if (laneNotes.Count > 0)
+            {
+                allNotesProcessed = false;
+                break;
+            }
         }
-        return false;
+
+        bool isMusicEnd = Managers.Audio.IsMusicEnd();
+        Debug.Log($"AllNotesProcessed: {allNotesProcessed}, IsMusicEnd: {isMusicEnd}"); // 상태 로깅
+        // 음악이 끝났고 모든 노트가 처리되었는지 확인
+        return isMusicEnd && allNotesProcessed;
+    }
+
+    private IEnumerator EndMusic()
+    {
+        _isEndMusic = true;
+        var sceneAnimator = GameObject.Find("SceneAnimator").GetComponent<Animator>();
+        sceneAnimator.SetTrigger("FadeIn");
+
+        yield return new WaitForSeconds(sceneAnimator.GetCurrentAnimatorStateInfo(0).length);
+        yield return new WaitForSeconds(1f);
+        
+        var scoreDisplay = Managers.UI.AddPanel<UIScoreDisplay>("UIScoreDisplay");
+        scoreDisplay.transform.SetSiblingIndex(scoreDisplay.transform.parent.childCount - 2);
+        scoreDisplay.gameObject.SetActive(false);
+
+        yield return new WaitForSeconds(1f);
+        sceneAnimator.SetTrigger("FadeOut");  
+        scoreDisplay.gameObject.SetActive(true);
     }
 }

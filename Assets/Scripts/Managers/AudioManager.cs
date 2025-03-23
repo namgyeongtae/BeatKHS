@@ -32,6 +32,14 @@ public class AudioManager : Manager
     public float SongPosition => _songPosition;
     public float SongLength => _songLength;
     public float SongProgress => _songPosition / _songLength;
+    public bool IsMusicEnded => _songPosition >= _songLength;
+
+    public bool IsMusicEnd()
+    {
+        Debug.Log("IsMusicEnd : " + _songPosition + "/" + _songLength);
+
+        return _songPosition >= _songLength;
+    }
 
     public override void Init()
     {
@@ -156,10 +164,29 @@ public class AudioManager : Manager
 
     public override void Update()
     {
-        if (_isPlaying && _bgmChannel.hasHandle())
+        if (_isPlaying)
         {
+            if (!_bgmChannel.hasHandle())
+            {
+                _isPlaying = false;
+                _songPosition = _songLength + 0.1f; // 채널이 끊어졌을 때도 곡이 끝난 것으로 처리
+                Debug.Log($"Music Progress : {_songPosition} / {_songLength}");
+                return;
+            }
+
             _bgmChannel.getPosition(out uint pos, FMOD.TIMEUNIT.MS);
             _songPosition = (pos / 1000f) + _offset;
+
+            // 곡이 끝나가는 시점에서는 정확한 길이로 설정
+            if (_songPosition >= _songLength - 0.1f)  // 0.1초 정도의 여유를 둠
+            {
+                _songPosition = _songLength + 0.1f;
+                _isPlaying = false;
+                Debug.Log($"Music Progress : {_songPosition} / {_songLength}");
+                // StopSong();
+            }
+
+            Debug.Log($"Music Progress : {_songPosition} / {_songLength}");
         }
     }
 

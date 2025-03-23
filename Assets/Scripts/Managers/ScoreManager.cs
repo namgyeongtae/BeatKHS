@@ -1,6 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
+public enum RankType
+{
+    S,
+    A,
+    B,
+    C
+}
 
 public class ScoreManager : Manager
 {
@@ -15,6 +24,8 @@ public class ScoreManager : Manager
     private int _currentCombo = 0;
     private int _maxCombo = 0;
     private float _comboBonusMultiplier = 1f;
+
+    private float _currentAccuracy = 0f;
     
     public override void Init()
     {
@@ -24,6 +35,8 @@ public class ScoreManager : Manager
         _scoreCount.Add(JudgeType.Good, 0);
         _scoreCount.Add(JudgeType.Bad, 0);
         _scoreCount.Add(JudgeType.Miss, 0);
+
+        UpdateAccuracy();
     }
 
     public override void Clear()
@@ -32,6 +45,12 @@ public class ScoreManager : Manager
         _scoreCount[JudgeType.Good] = 0;
         _scoreCount[JudgeType.Bad] = 0;
         _scoreCount[JudgeType.Miss] = 0;
+
+        _currentScore = 0;
+        _currentCombo = 0;
+        _currentAccuracy = 0f;
+        _maxCombo = 0;
+        _comboBonusMultiplier = 1f;
     }
 
     public void AddScore(JudgeType judgeType)
@@ -66,9 +85,56 @@ public class ScoreManager : Manager
         if (_currentCombo > _maxCombo)
             _maxCombo = _currentCombo;
 
+        UpdateAccuracy();
+
         Managers.UI.GetUI<ScoreUI>("ScoreUI")?.SetScore(_currentScore);
 
         Debug.Log($"판정: {judgeType}, 점수: {finalScore}, 현재 총점: {_currentScore}, 콤보: {_currentCombo}");
+    }
+
+    public void JudgeRank(UIScoreDisplay scoreDisplay)
+    {
+        Debug.Log("JudgeRank");
+        if (_currentAccuracy >= 0.95f)
+        {
+            Debug.Log("Rank : S");
+            scoreDisplay?.SetRank(RankType.S);
+        }
+        else if (_currentAccuracy >= 0.9f)
+        {
+            Debug.Log("Rank : A");
+            scoreDisplay?.SetRank(RankType.A);
+        }
+        else if (_currentAccuracy >= 0.8f)
+        {
+            Debug.Log("Rank : B");
+            scoreDisplay?.SetRank(RankType.B);
+        }
+        else
+        {
+            Debug.Log("Rank : C");
+            scoreDisplay?.SetRank(RankType.C);
+        }
+    }
+
+    private void UpdateAccuracy()
+    {
+        int totalJudgeNotes = _scoreCount[JudgeType.Perfect] + _scoreCount[JudgeType.Good] + _scoreCount[JudgeType.Bad] + _scoreCount[JudgeType.Miss];
+
+        if (totalJudgeNotes == 0)
+        {
+            _currentAccuracy = 100f;
+            return;
+        }
+
+        int perfectNotes = _scoreCount[JudgeType.Perfect];
+        int goodNotes = _scoreCount[JudgeType.Good];
+
+        float accuracy = (100f * perfectNotes + 50f * goodNotes) / totalJudgeNotes;
+        
+        _currentAccuracy = accuracy;
+
+        Managers.UI.GetUI<ScoreUI>("ScoreUI")?.SetAccuracy(_currentAccuracy);
     }
 
     // 콤보 리셋
