@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -21,14 +22,14 @@ public class MusicManager : MonoBehaviour
         InitNoteList();
     }
 
-    void Update()
+    private async void Update()
     {
         Debug.Log("MusicManager Update Running");
 
         if (IsEndMusic() && !_isEndMusic)
         {
             Debug.Log("Starting EndMusic Coroutine");
-            StartCoroutine(EndMusic());
+            await EndMusic();
         }
     }
 
@@ -62,20 +63,30 @@ public class MusicManager : MonoBehaviour
         return isMusicEnd && allNotesProcessed;
     }
 
-    private IEnumerator EndMusic()
+    private async Task EndMusic()
     {
         _isEndMusic = true;
         var sceneAnimator = GameObject.Find("SceneAnimator").GetComponent<Animator>();
         sceneAnimator.SetTrigger("FadeIn");
 
-        yield return new WaitForSeconds(sceneAnimator.GetCurrentAnimatorStateInfo(0).length);
-        yield return new WaitForSeconds(1f);
+        await Task.Delay((int)(sceneAnimator.GetCurrentAnimatorStateInfo(0).length * 1000));
+        await Task.Delay(1000);
         
         var scoreDisplay = Managers.UI.AddPanel<UIScoreDisplay>("UIScoreDisplay");
         scoreDisplay.transform.SetSiblingIndex(scoreDisplay.transform.parent.childCount - 2);
         scoreDisplay.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(1f);
+        ScoreInfo scoreInfo = new ScoreInfo();
+        scoreInfo.BestScore = Managers.Score.BestScore;
+        scoreInfo.BestCombo = Managers.Score.BestCombo;
+        scoreInfo.JudgeRate = Managers.Score.JudgeRate;
+        scoreInfo.PerfectCount = Managers.Score.PerfectCount;
+        scoreInfo.GoodCount = Managers.Score.GoodCount;
+        scoreInfo.BadCount = Managers.Score.BadCount;
+        scoreInfo.MissCount = Managers.Score.MissCount;
+
+        await Managers.FirebaseData.SaveScoreData(Managers.Auth.UserData.UserName, Managers.Audio.CurrentBGM.ToString(), scoreInfo);
+        await Task.Delay(1000);
         sceneAnimator.SetTrigger("FadeOut");  
         scoreDisplay.gameObject.SetActive(true);
     }

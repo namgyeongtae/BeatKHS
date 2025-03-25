@@ -123,7 +123,16 @@ public class UIMusicList : CanvasPanel
         _selectedMusic = musicSelection;
         _selectedMusic.Selected();
 
-        
+        var scoreInfoLayout = Managers.UI.GetUI<UIScoreInfoLayout>("UIScoreInfoLayout");
+        if (Managers.Data.ScoreInfos.ContainsKey(_selectedMusic.MusicData.clip))
+        {
+            var scoreInfo = Managers.Data.ScoreInfos[_selectedMusic.MusicData.clip];
+            scoreInfoLayout.UpdateScoreInfo(scoreInfo);
+        }
+        else
+        {
+            scoreInfoLayout.UpdateScoreInfo(new ScoreInfo());
+        }
 
         // 이전 코루틴이 실행 중이라면 중지
         if (_videoChangeCoroutine != null)

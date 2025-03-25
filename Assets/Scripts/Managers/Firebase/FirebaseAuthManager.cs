@@ -11,6 +11,8 @@ public class FirebaseAuthManager : Manager
     private FirebaseAuth _auth;     // 로그인  / 회원가입 등에 사용
     private FirebaseUser _user;     // 인증이 완료된 유저 정보
 
+    public UserData UserData = new();
+
     public enum AuthStatus
     {
         Success,
@@ -29,6 +31,7 @@ public class FirebaseAuthManager : Manager
         {
             AuthResult authResult = await _auth.CreateUserWithEmailAndPasswordAsync(email, password);
             _user = authResult.User;
+
             Debug.LogFormat("회원가입 성공 : {0} ({1})", _user.Email, _user.UserId);
             return (AuthStatus.Success, "회원가입에 성공했습니다.");
         }
@@ -55,6 +58,15 @@ public class FirebaseAuthManager : Manager
         {
             AuthResult authResult = await _auth.SignInWithEmailAndPasswordAsync(email, password);
             _user = authResult.User;
+
+            UserData.UserID = _user.UserId;
+            UserData.UserName = _user.Email;
+
+            await Managers.FirebaseData.CreateUserWithJson(_user.Email, UserData);
+
+            Managers.Data.ScoreInfos = await Managers.FirebaseData.ReadScoreData(_user.Email);
+            // await Managers.FirebaseData.TestReadData(_user.Email);
+
             Debug.LogFormat("로그인 성공 : {0} ({1})", _user.Email, _user.UserId);
             return (AuthStatus.Success, "로그인에 성공했습니다.");
         }

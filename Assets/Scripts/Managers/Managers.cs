@@ -11,6 +11,7 @@ public class Managers
     private static AudioManager _audio = new AudioManager();
     private static ScoreManager _score = new ScoreManager();
     private static FirebaseAuthManager _auth = new FirebaseAuthManager();
+    private static FirebaseDataManager _firebaseData = new FirebaseDataManager();
 
     public static ResourceManager Resource => _resource;
     public static UIManager UI => _ui;
@@ -19,10 +20,12 @@ public class Managers
     public static AudioManager Audio => _audio;
     public static ScoreManager Score => _score;
     public static FirebaseAuthManager Auth => _auth;
+    public static FirebaseDataManager FirebaseData => _firebaseData;
 
     public void Init()
     {
         _auth.Init();
+        _firebaseData.Init();
         _ui.Init();
         _data.Init();
         _audio.Init();

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-public class UIScoreInfoLayout : UIBindBase
+public class UIScoreInfoLayout : CanvasPanel
 {
-    [Bind("BestScoreText")] private TextMeshProUGUI _bestScoreText;
+    [Bind("ScoreText")] private TextMeshProUGUI _bestScoreText;
     [Bind("BestComboText")] private TextMeshProUGUI _bestComboText;
     [Bind("JudgeRateText")] private TextMeshProUGUI _judgeRateText;
 

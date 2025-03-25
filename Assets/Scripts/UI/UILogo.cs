@@ -88,7 +88,7 @@ public class UILogo : CanvasPanel
         float intensity = GetAudioIntensity() * 1000;
         
         // 디버그용 로그
-        Debug.Log($"Audio Intensity: {intensity}");
+        // Debug.Log($"Audio Intensity: {intensity}");
         
         // 쿨다운 체크 후 비트 감지 (최소값과 최대값 사이일 때만 감지)
         if (intensity >= minThreshold && intensity <= maxThreshold && 

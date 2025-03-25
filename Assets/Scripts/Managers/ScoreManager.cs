@@ -26,6 +26,14 @@ public class ScoreManager : Manager
     private float _comboBonusMultiplier = 1f;
 
     private float _currentAccuracy = 0f;
+
+    public int BestScore => _currentScore;
+    public int BestCombo => _maxCombo;
+    public float JudgeRate => _currentAccuracy;
+    public int PerfectCount => _scoreCount[JudgeType.Perfect];
+    public int GoodCount => _scoreCount[JudgeType.Good];
+    public int BadCount => _scoreCount[JudgeType.Bad];
+    public int MissCount => _scoreCount[JudgeType.Miss];
     
     public override void Init()
     {
