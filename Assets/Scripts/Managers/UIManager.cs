@@ -68,11 +68,11 @@ public class UIManager : Manager
         
     }
 
-    public GameObject ShowHitEffect(Transform targetTransform)
+    public GameObject ShowHitEffect(Vector2 targetPosition)
     {
         var go = Managers.Resource.Instantiate("Hit");
         go.transform.SetParent(BaseCanvas.transform);
-        go.transform.position = targetTransform.position;
+        go.transform.position = targetPosition;
 
         // Animator 컴포넌트 가져오기
         Animator animator = go.GetComponent<Animator>();
@@ -90,11 +90,11 @@ public class UIManager : Manager
         return go;
     }
 
-    public GameObject ShowLongHitEffect(Transform targetTransform)
+    public GameObject ShowLongHitEffect(Vector2 targetPosition)
     {
         var go = Managers.Resource.Instantiate("LongHit");
         go.transform.SetParent(BaseCanvas.transform);
-        go.transform.position = targetTransform.position;
+        go.transform.position = targetPosition;
 
         return go;
     }

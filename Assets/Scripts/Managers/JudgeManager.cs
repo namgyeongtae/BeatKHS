@@ -101,7 +101,7 @@ public class JudgeManager : MonoBehaviour
         // 콤보 이펙트
         if (result != JudgeType.Miss && result != JudgeType.Bad)
         {
-            Managers.UI.ShowHitEffect(targetNote.transform);
+            Managers.UI.ShowHitEffect(new Vector2(targetNote.transform.position.x, _center.transform.position.y));
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboEffect();
         }
         else
@@ -164,7 +164,7 @@ public class JudgeManager : MonoBehaviour
         }
 
 
-        var hitEffect = Managers.UI.ShowLongHitEffect(targetNote.transform);
+        var hitEffect = Managers.UI.ShowLongHitEffect(new Vector2(targetNote.transform.position.x, _center.transform.position.y));
 
         Vector3[] endNoteCorners = new Vector3[4];
         targetNote.EndNote.GetComponent<RectTransform>().GetWorldCorners(endNoteCorners);
