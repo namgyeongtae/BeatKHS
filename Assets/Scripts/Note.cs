@@ -41,6 +41,9 @@ public class Note : MonoBehaviour
             Debug.Log("Result Miss");
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
             Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
+            
+            Managers.Score.AddScore(JudgeType.Miss);
+
             RemoveNote();
         }
     }

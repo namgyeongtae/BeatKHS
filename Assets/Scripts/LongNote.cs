@@ -54,6 +54,8 @@ public class LongNote : Note
             _isMissed = true;
             Managers.UI.GetUI<ComboUI>("ComboUI").ComboMiss();
             Managers.UI.GetUI<JudgeUI>("JudgeUI").SetJudgeImage(JudgeType.Miss);
+
+            Managers.Score.AddScore(JudgeType.Miss);
         }
 
         // 판정선 도달 여부 확인 및 처리
