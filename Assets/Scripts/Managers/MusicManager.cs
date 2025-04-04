@@ -85,7 +85,21 @@ public class MusicManager : MonoBehaviour
         scoreInfo.BadCount = Managers.Score.BadCount;
         scoreInfo.MissCount = Managers.Score.MissCount;
 
-        await Managers.FirebaseData.SaveScoreData(Managers.Auth.UserData.UserName, Managers.Audio.CurrentBGM.ToString(), scoreInfo);
+        // 기존 점수랑 비교해 더 높은 점수면 저장
+        if (Managers.Data.ScoreInfos.ContainsKey(Managers.Audio.CurrentBGM.ToString()))
+        {
+            if (Managers.Data.ScoreInfos[Managers.Audio.CurrentBGM.ToString()].BestScore < Managers.Score.BestScore)
+            {
+                Managers.Data.ScoreInfos[Managers.Audio.CurrentBGM.ToString()] = scoreInfo;
+                await Managers.FirebaseData.SaveScoreData(Managers.Auth.UserData.UserName, Managers.Audio.CurrentBGM.ToString(), scoreInfo);
+            }
+        }
+        else
+        {
+            Managers.Data.ScoreInfos.Add(Managers.Audio.CurrentBGM.ToString(), scoreInfo);
+            await Managers.FirebaseData.SaveScoreData(Managers.Auth.UserData.UserName, Managers.Audio.CurrentBGM.ToString(), scoreInfo);
+        }
+
         await Task.Delay(1000);
         sceneAnimator.SetTrigger("FadeOut");  
         scoreDisplay.gameObject.SetActive(true);
