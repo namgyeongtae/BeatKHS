@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
+using Unity.Burst;
 
 public class UIScoreDisplay : CanvasPanel
 {
@@ -14,6 +15,8 @@ public class UIScoreDisplay : CanvasPanel
     [Bind("MissCount")] private TextMeshProUGUI _missCount;
     [Bind("FinalScore")] private TextMeshProUGUI _finalScore;
 
+    [Bind("ExitButton")] private UIButton _exitButton;
+
     [Bind("RankImage")] private Image _rankImage;
     [Bind("Block")] private Image _block;
 
@@ -22,9 +25,10 @@ public class UIScoreDisplay : CanvasPanel
     protected override void Initialize()
     {
         base.Initialize();
+        _exitButton.BindEvent(MoveToSelectionScene);
 
         ScoreInfo();
-
+        
         _block.DOFade(0f, 1f).SetDelay(1f);
     }
 
@@ -38,6 +42,13 @@ public class UIScoreDisplay : CanvasPanel
         _finalScore.text = Managers.Score.GetCurrentScore().ToString();
 
         Managers.Score.JudgeRank(this);
+    }
+
+    private void MoveToSelectionScene()
+    {
+        Managers.Score.Clear();
+
+        Managers.Scene.LoadScene("SelectionScene").Forget();
     }
 
     public void SetRank(RankType rankType)
