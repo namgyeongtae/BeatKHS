@@ -42,11 +42,11 @@ public class JudgeManager : MonoBehaviour
     {
         float timeDiff = Mathf.Abs(Managers.Audio.GetCurrentTime() - noteTime);
 
-        if (timeDiff <= 150f)
+        if (timeDiff <= Define.JUDGE_PERFECT_TIME)
         {
             return JudgeType.Perfect;
         }
-        else if (timeDiff <= 300f)
+        else if (timeDiff <= Define.JUDGE_GOOD_TIME)
         {
             return JudgeType.Good;
         }
