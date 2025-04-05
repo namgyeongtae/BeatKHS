@@ -38,6 +38,24 @@ public class JudgeManager : MonoBehaviour
         }
     }
 
+    private JudgeType JudgeRank(float noteTime, int lane)
+    {
+        float timeDiff = Mathf.Abs(Managers.Audio.GetCurrentTime() - noteTime);
+
+        if (timeDiff <= 150f)
+        {
+            return JudgeType.Perfect;
+        }
+        else if (timeDiff <= 300f)
+        {
+            return JudgeType.Good;
+        }
+        else
+        {
+            return JudgeType.Bad;
+        }
+    }
+
     public void Judge(int lane)
     {
         if (MusicManager.Instance.Notes[lane].Count == 0)
@@ -85,7 +103,7 @@ public class JudgeManager : MonoBehaviour
 
         // 판정선과의 거리계산
         // 노트와의 거리가 가장 가까운 판정선을 찾아서 판정
-        for (int y = _timingBoxs.Length - 1; y >= 0; y--)
+        /* for (int y = _timingBoxs.Length - 1; y >= 0; y--)
         {
             if (_timingBoxs[y].x <= t_notePosY && t_notePosY <= _timingBoxs[y].y)
             {
@@ -93,7 +111,9 @@ public class JudgeManager : MonoBehaviour
                 result = _judgeTypeList[y];
                 break;
             }
-        }
+        } */
+
+        result = JudgeRank(targetNote.NoteData.time, lane);
 
         // 판정 점수 계산
         Managers.Score.AddScore(result);
@@ -142,7 +162,7 @@ public class JudgeManager : MonoBehaviour
         targetNote.Rect.GetWorldCorners(noteCorners);
         float t_notePosY = noteCorners[0].y;
         
-        for (int y = _timingBoxs.Length - 1; y >= 0; y--)
+        /* for (int y = _timingBoxs.Length - 1; y >= 0; y--)
         {
             if (_timingBoxs[y].x <= t_notePosY && t_notePosY <= _timingBoxs[y].y)
             {
@@ -150,7 +170,9 @@ public class JudgeManager : MonoBehaviour
                 Debug.Log("Hit Long Note" + result.ToString());
                 break;
             }
-        }
+        } */
+
+        result = JudgeRank(targetNote.NoteData.time, lane);
 
         targetNote.SetNoteJudged();
 
@@ -217,14 +239,16 @@ public class JudgeManager : MonoBehaviour
         JudgeType endNoteResult = JudgeType.Miss;
         
         // endNote의 위치에 따른 판정
-        for (int y = _timingBoxs.Length - 1; y >= 0; y--)
+        /* for (int y = _timingBoxs.Length - 1; y >= 0; y--)
         {
             if (_timingBoxs[y].x <= endNotePosY && endNotePosY <= _timingBoxs[y].y)
             {
                 endNoteResult = _judgeTypeList[y];
                 break;
             }
-        }
+        } */
+
+        endNoteResult = JudgeRank(targetNote.NoteData.time + targetNote.NoteData.duration, lane);
 
         if (endNoteResult == JudgeType.Miss || endNoteResult == JudgeType.Bad)
         {
