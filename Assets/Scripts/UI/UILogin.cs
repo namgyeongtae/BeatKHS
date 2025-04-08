@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class UILogin : CanvasPanel
 {
@@ -11,6 +12,7 @@ public class UILogin : CanvasPanel
     [Bind("PasswordInput")] private TMP_InputField _passwordInput;
     [Bind("LoginButton")] private UIButton _loginButton;
     [Bind("SignInButton")] private UIButton _signInButton;
+    private Vector3 _originPosition;
 
     protected override void Initialize()
     {
@@ -21,6 +23,8 @@ public class UILogin : CanvasPanel
         _loginButton.BindEvent(OnLogin);
 
         _signInButton.BindEvent(OnSignIn);
+
+        _originPosition = GetComponent<RectTransform>().position;
     }
 
     private async void OnLogin()
@@ -30,6 +34,8 @@ public class UILogin : CanvasPanel
         switch (status)
         {
             case FirebaseAuthManager.AuthStatus.Success:
+                // 오브젝트 자체를 원래 위치로 RectTransform DOTween 이동
+                GetComponent<RectTransform>().DOMove(_originPosition, 0.5f);
                 MoveToNextScene();
                 break;
             case FirebaseAuthManager.AuthStatus.Canceled:
