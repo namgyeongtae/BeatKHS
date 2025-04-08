@@ -63,7 +63,7 @@ public class Note : MonoBehaviour
     public void RemoveNote()
     {
         MusicManager.Instance.Notes[_noteData.lane].Remove(this);
-        Managers.Resource.Destroy(gameObject);
+        Managers.Resource.Destroy(gameObject, true);
 
         Debug.Log($"Note removed: {this.gameObject.name}, {_noteData.lane}");
     }

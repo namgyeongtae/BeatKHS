@@ -103,7 +103,7 @@ public class NoteGenerator : MonoBehaviour
     private void SpawnLongNote(NoteData noteData)
     {
         Transform keyLine = _keyLines[noteData.lane];
-        GameObject note = Instantiate(_longNotePrefab, keyLine);
+        GameObject note = Managers.Resource.Instantiate(_longNotePrefab, keyLine, true, 70);
 
         RectTransform noteRect = note.GetComponent<RectTransform>();
 
@@ -117,7 +117,7 @@ public class NoteGenerator : MonoBehaviour
     private void SpawnShortNote(NoteData noteData)
     {
         Transform keyLine = _keyLines[noteData.lane];
-        GameObject note = Instantiate(_notePrefab, keyLine);
+        GameObject note = Managers.Resource.Instantiate(_notePrefab, keyLine, true, 70);
         RectTransform noteRect = note.GetComponent<RectTransform>();
             
         // 스폰 위치를 고정된 위치로 설정

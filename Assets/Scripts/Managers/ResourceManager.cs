@@ -23,7 +23,7 @@ public class ResourceManager
         return Resources.Load<T>(path);
     }
 
-    public GameObject Instantiate(string path, Transform parent = null, int poolCount = 5)
+    public GameObject Instantiate(string path, Transform parent = null, bool usePool = false, int poolCount = 5)
     {
         GameObject original = Load<GameObject>($"Prefabs/{path}");
         if (original == null)
@@ -32,15 +32,21 @@ public class ResourceManager
             return null;
         }
 
-        /* if (original.GetComponent<Poolable>() != null)
-            return Managers.Pool.Pop(original, parent, poolCount).gameObject; */
+        if (usePool)
+        {
+            string name = original.name;
+            if (!Managers.Pool.PoolDictionary.ContainsKey(name))
+                Managers.Pool.CreatePool(name, original, poolCount);
+            
+            return Managers.Pool.Pop(name);
+        }
 
         GameObject go = Object.Instantiate(original, parent);
         go.name = original.name;
         return go;
     }
 
-    public GameObject Instantiate(GameObject prefab, int poolCount = 5, Transform parent = null)
+    public GameObject Instantiate(GameObject prefab, Transform parent = null, bool usePool = false, int poolCount = 5)
     {
         if (prefab == null)
         {
@@ -48,42 +54,55 @@ public class ResourceManager
             return null;
         }
 
-        /* if (prefab.GetComponent<Poolable>() != null)
-            return Managers.Pool.Pop(prefab, parent, poolCount).gameObject; */
+        GameObject go = null;
 
-        GameObject go = Object.Instantiate(prefab, parent);
+        if (usePool)
+        {
+            string name = prefab.name;
+            if (!Managers.Pool.PoolDictionary.ContainsKey(name))
+                Managers.Pool.CreatePool(name, prefab, poolCount);
+            
+            go = Managers.Pool.Pop(name);
+            go.transform.SetParent(parent);
+            go.transform.localScale = Vector3.one;
+            go.name = prefab.name;
+
+            return go;
+        }
+
+        go = Object.Instantiate(prefab, parent);
+        go.transform.localScale = Vector3.one;
         go.name = prefab.name;
         return go;
     }
 
-    public void Destroy(GameObject go)
+    public void Destroy(GameObject go, bool usePool = false)
     {
         if (go == null)
             return;
 
-        /* Poolable poolable = go.GetComponent<Poolable>();
-        if (poolable != null)
+        if (usePool)
         {
-            Managers.Pool.Push(poolable);
+            Managers.Pool.Push(go.name, go);
             return;
-        } */
+        }
 
         Object.Destroy(go);
     }
 
-    public IEnumerator Destroy(GameObject go, float delay)
+    public IEnumerator Destroy(GameObject go, float delay, bool usePool = false)
     {
         if (go == null)
             yield break;
 
-        /* Poolable poolable = go.GetComponent<Poolable>();
-        if (poolable != null)
-        {
-            yield return new WaitForSeconds(delay);
-            Managers.Pool.Push(poolable);
-            yield break;
-        } */
+        yield return new WaitForSeconds(delay);
 
-        Object.Destroy(go, delay);
+        if (usePool)
+        {
+            Managers.Pool.Push(go.name, go);
+            yield break;
+        }
+
+        Object.Destroy(go);
     }
 }

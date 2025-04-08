@@ -10,6 +10,7 @@ public class Managers
     private static SceneManagerEx _scene = new SceneManagerEx();
     private static AudioManager _audio = new AudioManager();
     private static ScoreManager _score = new ScoreManager();
+    private static PoolManager _pool = new PoolManager();
     private static FirebaseAuthManager _auth = new FirebaseAuthManager();
     private static FirebaseDataManager _firebaseData = new FirebaseDataManager();
 
@@ -19,6 +20,7 @@ public class Managers
     public static SceneManagerEx Scene => _scene;
     public static AudioManager Audio => _audio;
     public static ScoreManager Score => _score;
+    public static PoolManager Pool => _pool;
     public static FirebaseAuthManager Auth => _auth;
     public static FirebaseDataManager FirebaseData => _firebaseData;
 

@@ -141,7 +141,7 @@ public class JudgeManager : MonoBehaviour
         // 오브젝트 파괴
         if (targetNote != null)
         {
-            Destroy(targetNote.gameObject);
+            Managers.Resource.Destroy(targetNote.gameObject, true);
         }
 
         Debug.Log(result == JudgeType.Miss ? "Miss" : result.ToString());
