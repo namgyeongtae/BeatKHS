@@ -1,21 +1,13 @@
 **Unity 기반 2D 리듬게임 프로젝트**
 ---
 
-## 특징
--  FMOD 기반 오디오 타이밍 시스템
--  키 입력 판정 (Perfect / Good / Miss)
--  채보 제작용 Unity Editor 툴
--  Firebase Authentication 지원 (익명 로그인 포함)
--  Realtime Database를 통한 점수 및 콤보 저장
--  JSON 기반 채보 데이터 저장/로드
-
----
-
 ## 기술스택
 - 엔진 : Unity 2022.3.10f1
 - 언어 : C#
 - 오디오 미들웨어 : FMOD
 - 백엔드 : Firebase (Authentication, Realtime Database)
+
+---
 
 ## 프리뷰
 
