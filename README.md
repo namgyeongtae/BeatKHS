@@ -99,6 +99,7 @@ Unity IMGUI (Immediate Mode GUI) 시스템에서 스크롤뷰 관련 중요 포�
 - `2028 (Click Mouse Position) - 944.xx(ScrollPosition.x) ≒ 1084` 성립  
 → 즉, **스크롤 뷰 내에서 클릭 시 `mousePosition`에 `scrollPosition`이 이미 포함되어 있다**는 사실을 알게 되었습니다.
 </details>
+
 ## 회고...
 
 
