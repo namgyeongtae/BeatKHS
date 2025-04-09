@@ -63,6 +63,7 @@ K-shoot mania의 채보 편집 툴을 참고로 제작하였습니다.
 - 해결 방식
   마우스 클릭 후 드래그 할 시 실시간으로 mousePostion 의 좌표와 scrollPosition의 좌표를 로그로 찍어 관찰해보았습니다.
   관찰 결과 : 스크롤 뷰 내에서 클릭을 할 시 mousePostion의 좌표 성분값이 비정상적으로 큰 것이 확인 되었고 이를 로그에 나온 scrollPosition을 뺀 결과의 좌표값이 실제 마우스가 위치한 스크린 좌표와 같다는 것을 파악하였습니다.
+             즉, 이미 scrollPosition 까지 포함된 mousePosition에 중복으로 한번 더 scrollPosition을 더하려고 한 것이 문제이므로 이를 더하지 않는 것으로 해결책은 아주 간단하였다.
 
   # 새로 알게 된 사실
   Unity IMGUI (Immediate Mode GUI) 시스템에서 스크롤뷰 관련 중요 포인트:
