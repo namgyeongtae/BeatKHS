@@ -57,9 +57,30 @@ K-shoot mania의 채보 편집 툴을 참고로 제작하였습니다.
 ---
 
 ## 트러블 슈팅
+# 채보 편집 노트 배치의 오류
+- 현상 : 편집 창의 스크롤을 어느 정도 한 경우 클릭한 지점이 아닌 엉뚱한 곳에 노트가 배치되는 이슈 발견
+- 원인 : 스크롤 뷰 내에서 클릭 지점인 mousePosition 에 Horizontal Scroll View가 넘어간 거리 만큼 더한 것이 오류를 발생
+- 해결 방식
+  마우스 클릭 후 드래그 할 시 실시간으로 mousePostion 의 좌표와 scrollPosition의 좌표를 로그로 찍어 관찰해보았습니다.
+  관찰 결과 : 스크롤 뷰 내에서 클릭을 할 시 mousePostion의 좌표 성분값이 비정상적으로 큰 것이 확인 되었고 이를 로그에 나온 scrollPosition을 뺀 결과의 좌표값이 실제 마우스가 위치한 스크린 좌표와 같다는 것을 파악하였습니다.
 
----
+  # 새로 알게 된 사실
+  Unity IMGUI (Immediate Mode GUI) 시스템에서 스크롤뷰 관련 중요 포인트:
 
+  1. EditorGUILayout.BeginScrollView()로 생성된 스크롤뷰 내에서:
+     - 일반 클릭의 경우 (OnClick)
+        - 마우스 이벤트의 좌표(e.mousePosition)는 Unity가 자동으로 처리
+        - 스크롤뷰의 로컬 좌표계로 자동 변환
+        - 따라서 추가로 scrollPosition을 더하면 안 됨
+     - 드래그의 경우 (OnDrag)
+        - 마우스 이벤트의 좌표가 스크롤 로컬좌표계가 아닌 절대적인 좌표
+
+   <img width="467" alt="image" src="https://github.com/user-attachments/assets/33302e01-61d4-4047-9df9-715cb27cf7dd" />
+    위 이미지는 마우스를 수직 드래그 하였을 때의 상황인데 마우스 커서의 좌표와 스크롤이 넘어간 거리(Scroll Position)을 실시간으로 로그에 출력해서 보여주는 이미지입니다.
+    [Drag]를 보면 1084로 x좌표가 나와 있는 걸 보고 바로 [Click]쪽을 확인해보니 드래그 전 딱 클릭을 했을 때는 2028로 더 크게 나와 있음을 확인할 수 있었습니다.
+    
+    2028 (Click Mouse Position) - 944.xx(ScrollPosition.x) = 약 1084(Mouse Screen Position) 
+    이런 식이 성립되는 걸 발견하게 되었고 이를 통해 스크롤 뷰 내 클릭 시 mousePosition은 유니티 내부에서 scrollPosition 까지 더해서 반환해 준다는 사실을 배우게 되었습니다.
 ## 회고...
 
 
