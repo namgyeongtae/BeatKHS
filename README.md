@@ -36,6 +36,16 @@
   - Firebase Realtime Database에 유저의 곡별 점수, 콤보, 판정 등급 저장
   - 로그인된 유저 기준으로 데이터 로드 및 UI에 반영
 
+
+Authentication
+
+<img width="634" alt="image" src="https://github.com/user-attachments/assets/f77e38a8-6535-4ae9-98ca-ed94f6fc9859" />
+
+
+Realtime Database
+
+<img width="716" alt="image" src="https://github.com/user-attachments/assets/93657e4f-af6d-45a3-bde2-1f22630e616f" />
+
 ---
 
 ## 프리뷰
