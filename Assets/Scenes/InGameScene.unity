@@ -1619,7 +1619,7 @@ MonoBehaviour:
   _longNotePrefab: {fileID: 7399325887383173250, guid: 7748913d011ec074fa636ae53eafff44, type: 3}
   _judgementLineY: 0
   _noteSpawnPoint: {fileID: 1101829944}
-  _timeOffset: -100
+  _timeOffset: 0
 --- !u!4 &576778725
 Transform:
   m_ObjectHideFlags: 0
